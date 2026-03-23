@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legal — eSellerFit LLC</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=DM+Sans:wght@400;500;600&display=swap');
+
+:root {
+  --ink: #1c1917;
+  --ink-light: #57534e;
+  --ink-faint: #a8a29e;
+  --paper: #fafaf9;
+  --rule: #e7e5e4;
+  --accent: #0c4a6e;
+  --accent-bg: #f0f9ff;
+  --serif: 'Source Serif 4', 'Georgia', serif;
+  --sans: 'DM Sans', 'Helvetica Neue', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--sans);
+  font-size: 15.5px;
+  line-height: 1.72;
+  color: var(--ink);
+  background: var(--paper);
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 60px 24px 80px;
+  -webkit-font-smoothing: antialiased;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+header h1 {
+  font-family: var(--serif);
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+
+header .subtitle {
+  font-size: 0.95rem;
+  color: var(--ink-light);
+}
+
+header .date {
+  font-size: 0.82rem;
+  color: var(--ink-faint);
+  margin-top: 6px;
+}
+
+.doc-list {
+  list-style: none;
+  padding: 0;
+}
+
+.doc-list li {
+  border-bottom: 1px solid var(--rule);
+}
+
+.doc-list li:first-child {
+  border-top: 1px solid var(--rule);
+}
+
+.doc-list a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 4px;
+  text-decoration: none;
+  color: var(--ink);
+  transition: background 0.15s, padding-left 0.15s;
+}
+
+.doc-list a:hover {
+  background: var(--accent-bg);
+  padding-left: 12px;
+}
+
+.doc-name {
+  font-weight: 600;
+  font-size: 1.02rem;
+}
+
+.doc-desc {
+  font-size: 0.82rem;
+  color: var(--ink-faint);
+  margin-top: 2px;
+}
+
+.doc-arrow {
+  font-size: 1.1rem;
+  color: var(--ink-faint);
+  transition: color 0.15s, transform 0.15s;
+  flex-shrink: 0;
+  margin-left: 16px;
+}
+
+.doc-list a:hover .doc-arrow {
+  color: var(--accent);
+  transform: translateX(3px);
+}
+
+.note {
+  margin-top: 40px;
+  font-size: 0.85rem;
+  color: var(--ink-faint);
+  text-align: center;
+  line-height: 1.6;
+}
+
+footer {
+  margin-top: 48px;
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--ink-faint);
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+}
+
+footer a { color: var(--accent); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+@media (max-width: 600px) {
+  body { padding: 36px 16px 60px; }
+  header h1 { font-size: 1.7rem; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>eSellerFit Legal</h1>
+  <div class="subtitle">Policies, agreements, and disclosures</div>
+  <div class="date">Last updated: March 22, 2026</div>
+</header>
+
+<ol class="doc-list">
+  <li>
+    <a href="terms.html">
+      <div>
+        <div class="doc-name">Terms of Service</div>
+        <div class="doc-desc">General terms governing use of eSellerFit services</div>
+      </div>
+      <span class="doc-arrow">→</span>
+    </a>
+  </li>
+  <li>
+    <a href="privacy.html">
+      <div>
+        <div class="doc-name">Privacy Policy</div>
+        <div class="doc-desc">How we collect, use, and protect your information</div>
+      </div>
+      <span class="doc-arrow">→</span>
+    </a>
+  </li>
+  <li>
+    <a href="refunds.html">
+      <div>
+        <div class="doc-name">Refund Policy</div>
+        <div class="doc-desc">Cancellation windows, refund eligibility, and credits</div>
+      </div>
+      <span class="doc-arrow">→</span>
+    </a>
+  </li>
+  <li>
+    <a href="agreement.html">
+      <div>
+        <div class="doc-name">Client Agreement</div>
+        <div class="doc-desc">Terms specific to paid advisory engagements</div>
+      </div>
+      <span class="doc-arrow">→</span>
+    </a>
+  </li>
+  <li>
+    <a href="disclaimer.html">
+      <div>
+        <div class="doc-name">Disclaimer</div>
+        <div class="doc-desc">Limitations and risks of advisory services</div>
+      </div>
+      <span class="doc-arrow">→</span>
+    </a>
+  </li>
+</ol>
+
+<div class="note">
+  These documents form one integrated agreement.<br>
+  In case of conflict, the higher-priority document controls.<br>
+  See <a href="terms.html" style="color: var(--accent);">Terms of Service §1</a> for the full order of precedence.
+</div>
+
+<footer>
+  <strong>eSellerFit LLC</strong> · Westchester County, New York<br>
+  <a href="mailto:contact@esellerfit.com">contact@esellerfit.com</a>
+</footer>
+
+</body>
+</html>
