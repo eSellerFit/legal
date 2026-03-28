@@ -11,16 +11,16 @@ window.ESF_SITE = {
     marketPressureCalculator: './market-pressure/',
     marketplaceFitCalculator: './marketplace-fit/',
 
-    freeCallBookingPage: 'https://esellerfit.com/booking-free-call-v2.html',
-    paidBookingPage: 'https://esellerfit.com/booking-paid-v2.html'
+    freeCallBookingPage: './booking/free-call.html',
+    paidBookingPage: './booking/paid.html'
   },
 
   legal: {
-    terms: 'https://esellerfit.com/legal/terms.html',
-    privacy: 'https://esellerfit.com/legal/privacy.html',
-    disclaimer: 'https://esellerfit.com/legal/disclaimer.html',
-    clientAgreement: 'https://esellerfit.com/legal/client-agreement.html',
-    refundPolicy: 'https://esellerfit.com/legal/refund-policy.html'
+    terms: './legal/terms.html',
+    privacy: './legal/privacy.html',
+    disclaimer: './legal/disclaimer.html',
+    clientAgreement: './legal/client-agreement.html',
+    refundPolicy: './legal/refund-policy.html'
   },
 
   text: {
