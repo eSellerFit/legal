@@ -1,1 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Free Call — eSellerFit</title>
+  <link rel="stylesheet" href="../assets/css/booking.css">
+</head>
+<body>
+  <div class="booking-wrap">
+    <div class="booking-card">
+      <a class="booking-brand" href="../">
+        <div class="booking-logo">eSF</div>
+        <div class="booking-brand-name">eSellerFit</div>
+      </a>
 
+      <div class="booking-eyebrow">Free Intro Call</div>
+      <h1>Book Your Free Call</h1>
+      <p class="subtitle">30 minutes with George to understand where you are right now, what path makes sense, and whether the Entry Strategy is the right next step.</p>
+
+      <form id="bookingForm">
+        <div class="form-group">
+          <label for="fullName">Full Name *</label>
+          <input type="text" id="fullName" name="fullName" required>
+          <div class="error" id="fullNameError"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address *</label>
+          <input type="email" id="email" name="email" required>
+          <div class="error" id="emailError"></div>
+        </div>
+
+        <div class="consent-section">
+          <div class="consent-title">Required Agreements</div>
+
+          <div class="consent-item">
+            <label for="termsConsent">
+              <input type="checkbox" id="termsConsent" name="termsConsent">
+              I agree to the <a href="../legal/terms.html" target="_blank">Terms of Service</a>
+            </label>
+          </div>
+
+          <div class="consent-item">
+            <label for="privacyConsent">
+              <input type="checkbox" id="privacyConsent" name="privacyConsent">
+              I agree to the <a href="../legal/privacy.html" target="_blank">Privacy Policy</a>
+            </label>
+          </div>
+
+          <div class="consent-item">
+            <label for="disclaimerConsent">
+              <input type="checkbox" id="disclaimerConsent" name="disclaimerConsent">
+              I acknowledge the <a href="../legal/disclaimer.html" target="_blank">Disclaimer</a>
+            </label>
+          </div>
+
+          <div class="consent-item">
+            <label for="noSalesPitch">
+              <input type="checkbox" id="noSalesPitch" name="noSalesPitch">
+              I understand this is a free consultation with no commitment and no sales pitch
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" id="submitBtn" disabled>Continue to Calendar</button>
+        <div class="helper">You’ll be redirected to Google Calendar after submission.</div>
+      </form>
+
+      <div class="footer-links">
+        <a href="../legal/terms.html" target="_blank">Terms</a>
+        <a href="../legal/privacy.html" target="_blank">Privacy</a>
+        <a href="../legal/disclaimer.html" target="_blank">Disclaimer</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/booking-free.js"></script>
+</body>
+</html>
