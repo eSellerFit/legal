@@ -110,5 +110,20 @@ window.MARKETPLACE_FIT_RENDER = {
         `;
       }).join('')}
     `;
+
+    const ctaBtn = document.getElementById('ctaBtn');
+    const ctaBtn2 = document.getElementById('ctaBtn2');
+
+    if (ctaBtn) {
+      ctaBtn.onclick = () => {
+        window.location.href = '../booking/paid.html';
+      };
+    }
+
+    if (ctaBtn2) {
+      ctaBtn2.onclick = () => {
+        window.location.href = '../booking/free-call.html';
+      };
+    }
   }
 };
