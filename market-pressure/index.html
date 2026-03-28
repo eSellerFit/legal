@@ -1,1 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>eSellerFit — Market Pressure Scanner</title>
+  <link rel="stylesheet" href="/market-pressure/assets/css/shared-ui.css">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XYYCWXC1RV"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XYYCWXC1RV');
+  </script>
+</head>
+<body>
+  <div class="overlay" id="overlay">
+    <div class="spinner"></div>
+    <div class="overlay-txt">Scanning your market pressure...</div>
+  </div>
 
+  <div class="screen active" id="welcomeScreen">
+    <div class="w-inner">
+      <a class="w-brand" href="https://esellerfit.com" style="text-decoration:none;">
+        <div class="w-logo">eSF</div>
+        <div class="w-brand-name">eSellerFit</div>
+      </a>
+
+      <div class="w-left">
+        <div class="w-eyebrow">Market Pressure · Free</div>
+        <div class="w-title">What's Actually Competing for Your Market?</div>
+        <div class="w-sub">Demand is only half the story. This scanner evaluates four cross-pressures — demand, supply, advertising, and margin — that reveal whether a market is blue ocean or red ocean before you commit capital.</div>
+        <div class="w-confidence">If you're guessing at market pressure, this diagnostic finds what you don't know.</div>
+        <div class="w-intro-nudge">
+          <span>Not sure where to start?</span>
+          <a href="https://calendly.com/gio_chakhidze/new-meeting">Talk to Gio first — free 30 min →</a>
+        </div>
+      </div>
+
+      <div class="w-right">
+        <div class="w-form-card">
+          <div class="w-field-label">Your Email Address</div>
+          <input class="w-input" id="emailInput" type="email" placeholder="Enter your email address">
+
+          <div class="w-field-label">Your Product Category</div>
+          <input class="w-input" id="categoryInput" type="text" placeholder="e.g., 'wireless earbuds', 'dog toys', 'yoga mats'">
+
+          <label class="w-consent" id="consentLabel">
+            <input type="checkbox" id="consentCheck">
+            <span class="w-consent-txt">I agree to the <a href="https://esellerfit.com/legal/terms.html" target="_blank">Terms of Service</a>, <a href="https://esellerfit.com/legal/disclaimer.html" target="_blank">Disclaimer</a>, and <a href="https://esellerfit.com/legal/privacy.html" target="_blank">Privacy Policy</a> and understand that this tool provides directional insight only.</span>
+          </label>
+
+          <button class="w-btn" id="startBtn" disabled>Start Free Assessment →</button>
+          <div class="w-microcopy">
+            <span>12 signals · about 4 minutes · free</span>
+            <span class="w-legal-note">Your Entry Strategy uses verified market data for the category you enter here.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-footer">
+        <a href="https://esellerfit.com/legal/terms.html">Terms of Service</a>
+        <a href="https://esellerfit.com/legal/privacy.html">Privacy Policy</a>
+        <a href="https://esellerfit.com/legal/disclaimer.html">Disclaimer</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="assessScreen">
+    <div class="a-hdr">
+      <a class="a-logo" href="https://esellerfit.com" style="text-decoration:none;">
+        <div class="a-logo-box">eSF</div>
+        <div>
+          <div class="a-logo-name">eSellerFit</div>
+          <div class="a-sub" id="aSubtitle">Market Pressure Scanner</div>
+        </div>
+      </a>
+      <div class="a-prog">
+        <div class="a-prog-txt" id="progTxt">0 / 12</div>
+        <div class="a-prog-bg"><div class="a-prog-fill" id="progFill"></div></div>
+      </div>
+    </div>
+    <div class="a-body" id="aBody"></div>
+    <div class="c-bar" id="cBar">
+      <div class="c-msg"><strong>All signals recorded.</strong> Ready to generate your market pressure index.</div>
+      <button class="c-btn" id="cBtn">See My Index →</button>
+    </div>
+  </div>
+
+  <div class="screen" id="resultsScreen">
+    <div class="r-inner">
+      <a class="r-brand" href="https://esellerfit.com" style="text-decoration:none;"><div class="r-logo">eSF</div><div class="r-brand-name">eSellerFit</div></a>
+      <div class="r-hdr">
+        <div class="r-title">Your Market Pressure Index</div>
+        <div class="r-intro" id="categoryLine"></div>
+      </div>
+
+      <div class="index-card" id="indexCard">
+        <div class="index-card-label" id="indexCardLabel"></div>
+        <div class="index-card-zone">
+          <div class="index-number" id="indexNumber">0.0</div>
+          <div class="index-zone-txt">
+            <div class="zone-range" id="zoneLabel"></div>
+            <div class="zone-name" id="zoneName"></div>
+          </div>
+        </div>
+        <div class="index-body" id="indexBody"></div>
+      </div>
+
+      <div class="r-section">
+        <div class="r-section-eyebrow">Four Forces at Work</div>
+        <div class="r-section-title">Your index is the average of these four pressures</div>
+        <div class="force-rows" id="forceRows"></div>
+      </div>
+
+      <div class="r-section" id="dominantSlot"></div>
+
+      <div class="result-intro-nudge">
+        <span>Not sure what this means for your specific product?</span>
+        <a href="https://calendly.com/gio_chakhidze/new-meeting">Talk to Gio first — free 30 min →</a>
+      </div>
+
+      <div class="cta-section">
+        <div class="cta-eyebrow">Next Step · Entry Strategy</div>
+        <div class="cta-title">Two Ways to Go Deeper</div>
+        <label class="cta-consent" id="bookingConsentLabel">
+          <input type="checkbox" id="bookingConsent">
+          <span class="cta-consent-txt">✓ Check this box to confirm you understand this assessment is directional and that your final decisions are your own responsibility.</span>
+        </label>
+
+        <div style="border:1.5px solid rgba(15,110,86,0.35);border-radius:10px;padding:28px;background:rgba(15,110,86,0.03);margin-bottom:16px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.14em;color:#085041;margin-bottom:12px;">Option 1 · $449 — Recommended</div>
+          <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--ink);margin-bottom:10px;">Entry Strategy Dossier</div>
+          <ul class="cta-list" style="margin-bottom:16px;">
+            <li>Your market pressure re-evaluated with verified data for your specific category</li>
+            <li>Platform recommendation based on your profile AND your market pressure</li>
+            <li>A complete entry plan — what to sell, where, how to enter, and what risks to manage</li>
+            <li>Written Entry Strategy Dossier + 60-minute walkthrough session</li>
+          </ul>
+          <div class="cta-price"><strong>Written dossier + 60-minute session · $449</strong></div>
+          <button type="button" id="ctaBtn" class="cta-btn" disabled>Get My Entry Strategy · $449 →</button>
+        </div>
+
+        <div style="border:1px solid var(--border);border-radius:10px;padding:28px;background:rgba(255,255,255,0.5);">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.14em;color:#085041;margin-bottom:12px;">Option 2 · Free</div>
+          <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--ink);margin-bottom:10px;">Free Call with Gio</div>
+          <ul class="cta-list" style="margin-bottom:16px;">
+            <li>Get clarity on whether the Entry Strategy is right for you</li>
+            <li>Understand your market pressure signals and entry strategy</li>
+            <li>Leave with a specific next step recommendation</li>
+          </ul>
+          <div class="cta-price"><strong>30-minute call · Free</strong></div>
+          <button type="button" id="ctaBtn2" class="cta-btn" disabled>Book Free Call with Gio →</button>
+        </div>
+
+        <div style="margin-top:24px;padding:16px 20px;border:1px solid var(--border);border-radius:8px;background:rgba(15,110,86,0.04);text-align:center;">
+          <div style="font-size:12px;color:var(--t3);margin-bottom:8px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;">Ran all three free tools?</div>
+          <a href="https://calendly.com/gio_chakhidze/new-meeting" style="font-size:14px;color:#0f6e56;text-decoration:none;border-bottom:1px solid rgba(15,110,86,0.3);">You're ready — Book Entry Strategy · $449 →</a>
+        </div>
+
+        <div class="cta-or-talk">
+          Not ready to commit? <a href="https://calendly.com/gio_chakhidze/new-meeting">Book a free 30-min intro call first →</a>
+        </div>
+
+        <div class="cta-agreement">By booking you acknowledge the <a href="https://esellerfit.com/legal/client-agreement.html" target="_blank">Client Advisory Agreement</a>.</div>
+      </div>
+
+      <div class="next-section">
+        <div class="r-section-eyebrow">What Comes Next</div>
+        <div class="r-section-title" style="font-family:'Playfair Display',serif;font-size:20px;color:var(--ink);margin-bottom:12px;">You know the market pressure. The Entry Strategy adds your profile.</div>
+        <div style="font-size:14px;color:var(--t2);line-height:1.82;">Market pressure tells you the structural challenges. Your Entry Strategy combines this with your seller profile and platform fit — so you know not just whether entry is possible, but whether it's possible for you.</div>
+      </div>
+
+      <div class="advisory-section">
+        <div class="advisory-title">Advisory Notice</div>
+        <div class="advisory-body">This calculator provides directional insight based on user inputs. It does not constitute legal, financial, or investment advice. All business decisions remain the sole responsibility of the user. <a href="https://calendly.com/gio_chakhidze/new-meeting" style="color:#0f6e56;text-decoration:none;border-bottom:1px solid rgba(15,110,86,0.3);">A live session helps you interpret these results →</a></div>
+      </div>
+
+      <div class="r-footer">
+        <a href="https://esellerfit.com/legal/terms.html">Terms of Service</a>
+        <a href="https://esellerfit.com/legal/privacy.html">Privacy Policy</a>
+        <a href="https://esellerfit.com/legal/disclaimer.html">Disclaimer</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/market-pressure/assets/js/config.js"></script>
+  <script src="/market-pressure/assets/js/calculator-shell.js"></script>
+  <script src="/market-pressure/assets/js/market-pressure-data.js"></script>
+  <script src="/market-pressure/assets/js/market-pressure-engine.js"></script>
+  <script src="/market-pressure/assets/js/market-pressure-render.js"></script>
+  <script src="/market-pressure/assets/js/market-pressure-app.js"></script>
+</body>
+</html>
