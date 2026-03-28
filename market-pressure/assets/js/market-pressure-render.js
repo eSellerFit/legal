@@ -113,17 +113,6 @@ window.MARKET_PRESSURE_RENDER = {
 
   buildGauge(index, ocean, oceanCopy) {
     const value = Math.max(1, Math.min(10, index));
-    const t = (value - 1) / 9; // 0..1
-    const startAngle = Math.PI;
-    const endAngle = 0;
-    const angle = startAngle + (endAngle - startAngle) * t;
-
-    const cx = 160;
-    const cy = 160;
-    const r = 120;
-    const markerX = cx + r * Math.cos(angle);
-    const markerY = cy + r * Math.sin(angle);
-
     const zoneRange =
       ocean === 'blue' ? '1.0 – 3.0' :
       ocean === 'amber' ? '3.1 – 6.9' :
@@ -134,7 +123,7 @@ window.MARKET_PRESSURE_RENDER = {
         <div class="index-card-label" style="margin-bottom:18px;">Your Market Pressure</div>
 
         <div style="position:relative;width:320px;height:220px;margin:0 auto 12px;">
-          <svg viewBox="0 0 320 220" width="320" height="220" style="display:block;margin:0 auto;overflow:visible;">
+          <svg viewBox="0 0 320 220" width="320" height="220" style="display:block;margin:0 auto;overflow:hidden;">
             <path d="M 40 160 A 120 120 0 0 1 280 160"
               fill="none"
               stroke="#e7e1d8"
@@ -158,11 +147,6 @@ window.MARKET_PRESSURE_RENDER = {
               stroke="#c94a3a"
               stroke-width="18"
               stroke-linecap="round"/>
-
-            <circle cx="${markerX.toFixed(1)}" cy="${markerY.toFixed(1)}" r="8"
-              fill="${ocean === 'blue' ? '#4f8f7a' : ocean === 'amber' ? '#c28a3a' : '#c94a3a'}"
-              stroke="#ffffff"
-              stroke-width="4"/>
           </svg>
 
           <div style="position:absolute;left:0;right:0;top:76px;">
