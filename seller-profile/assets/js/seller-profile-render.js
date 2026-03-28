@@ -124,6 +124,22 @@ window.SELLER_PROFILE_RENDER = {
             <em style="color:var(--t4);font-size:13px;">This is a starting point based on your answers. A live session can help you figure out the right next step for your specific situation.</em>
           </div>
         </div>`;
+
+      const ctaBtn = document.getElementById('ctaBtn');
+      const ctaBtn2 = document.getElementById('ctaBtn2');
+
+      if (ctaBtn) {
+        ctaBtn.onclick = () => {
+          window.location.href = '../booking/paid.html';
+        };
+      }
+
+      if (ctaBtn2) {
+        ctaBtn2.onclick = () => {
+          window.location.href = '../booking/free-call.html';
+        };
+      }
+
       return;
     }
 
@@ -149,5 +165,20 @@ window.SELLER_PROFILE_RENDER = {
         </div>
         <div class="dir-caveat">This is a starting direction based on your answers — not a guarantee. A live session helps turn this into a real plan.</div>
       </div>`;
+
+    const ctaBtn = document.getElementById('ctaBtn');
+    const ctaBtn2 = document.getElementById('ctaBtn2');
+
+    if (ctaBtn) {
+      ctaBtn.onclick = () => {
+        window.location.href = '../booking/paid.html';
+      };
+    }
+
+    if (ctaBtn2) {
+      ctaBtn2.onclick = () => {
+        window.location.href = '../booking/free-call.html';
+      };
+    }
   }
 };
