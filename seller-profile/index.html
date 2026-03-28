@@ -1,1 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>eSellerFit — Seller Profile Assessment</title>
+  <link rel="stylesheet" href="./assets/css/shared-ui.css">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XYYCWXC1RV"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XYYCWXC1RV');
+  </script>
+</head>
+<body>
+  <div class="overlay" id="overlay">
+    <div class="spinner"></div>
+    <div class="overlay-txt">Processing your profile...</div>
+  </div>
 
+  <div class="screen active" id="welcomeScreen">
+    <div class="w-inner">
+      <a class="w-brand" href="https://esellerfit.com" style="text-decoration:none;">
+        <div class="w-logo">eSF</div>
+        <div class="w-brand-name">eSellerFit</div>
+      </a>
+
+      <div class="w-left">
+        <div class="w-eyebrow">Seller Profile · Free</div>
+        <div class="w-title">Find Out Which Platform Is Right for You</div>
+        <div class="w-sub">Answer 19 questions about your budget, time, and goals. We'll show you which e-commerce platform fits your situation — and what to do first.</div>
+        <div class="w-confidence">There are no right or wrong answers. Be honest — the more accurate your answers, the more useful your result.</div>
+        <div class="w-intro-nudge">
+          <span>Not sure where to start?</span>
+          <a href="https://calendly.com/gio_chakhidze/new-meeting">Talk to Gio first — free 30 min →</a>
+        </div>
+      </div>
+
+      <div class="w-right">
+        <div class="w-form-card">
+          <div class="w-field-label">Your Email Address</div>
+          <input class="w-input" id="emailInput" type="email" placeholder="Enter your email address">
+
+          <label class="w-consent" id="consentLabel">
+            <input type="checkbox" id="consentCheck">
+            <span class="w-consent-txt">
+              I agree to the <a href="https://esellerfit.com/legal/terms.html" target="_blank">Terms of Service</a>,
+              <a href="https://esellerfit.com/legal/disclaimer.html" target="_blank">Disclaimer</a>, and
+              <a href="https://esellerfit.com/legal/privacy.html" target="_blank">Privacy Policy</a> and understand
+              that this tool provides directional advisory insight only.
+            </span>
+          </label>
+
+          <button class="w-btn" id="startBtn" disabled>Start Free Assessment →</button>
+
+          <div class="w-microcopy">
+            <span>19 questions · about 5 minutes · free</span>
+            <span class="w-legal-note">Your results are a starting point, not a final answer — a live session helps interpret them for your specific situation.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-footer">
+        <a href="https://esellerfit.com/legal/terms.html">Terms of Service</a>
+        <a href="https://esellerfit.com/legal/privacy.html">Privacy Policy</a>
+        <a href="https://esellerfit.com/legal/disclaimer.html">Disclaimer</a>
+        <a href="https://esellerfit.com/legal/client-agreement.html">Client Advisory Agreement</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="assessScreen">
+    <div class="a-hdr">
+      <a class="a-logo" href="https://esellerfit.com" style="text-decoration:none;">
+        <div class="a-logo-box">eSF</div>
+        <div>
+          <div class="a-logo-name">eSellerFit</div>
+          <div class="a-sub" id="aSubtitle">Seller Profile Diagnostic</div>
+        </div>
+      </a>
+      <div class="a-prog">
+        <div class="a-prog-txt" id="progTxt">0 / 19</div>
+        <div class="a-prog-bg"><div class="a-prog-fill" id="progFill"></div></div>
+      </div>
+    </div>
+    <div class="a-body" id="aBody"></div>
+    <div class="c-bar" id="cBar">
+      <div class="c-msg"><strong>All responses recorded.</strong> Ready to generate your profile.</div>
+      <button class="c-btn" id="cBtn">Generate My Profile →</button>
+    </div>
+  </div>
+
+  <div class="screen" id="resultsScreen">
+    <div class="r-inner">
+      <a class="r-brand" href="https://esellerfit.com" style="text-decoration:none;">
+        <div class="r-logo">eSF</div>
+        <div class="r-brand-name">eSellerFit</div>
+      </a>
+
+      <div class="r-hdr">
+        <div class="r-title">Your Seller Profile Is Ready</div>
+        <div class="r-intro">Based on your answers, here's how your current situation fits different ways of selling online — and where to start.</div>
+        <div class="r-intro-2">This is a starting point, not a final answer. A live session helps translate this into a specific plan for your situation.</div>
+      </div>
+
+      <div class="r-radar-card">
+        <div class="r-section-eyebrow">Your Profile Chart</div>
+        <div class="r-radar-title">Where You're Strong — and Where to Focus</div>
+        <canvas id="radarCanvas" width="540" height="400"></canvas>
+        <div class="r-radar-sub">The further each point extends, the stronger that area of your profile.</div>
+        <div class="r-legend">
+          <div class="r-leg"><div class="r-leg-dot" style="background:#caa25f"></div>Budget</div>
+          <div class="r-leg"><div class="r-leg-dot" style="background:#4ecdc4"></div>Risk Tolerance</div>
+          <div class="r-leg"><div class="r-leg-dot" style="background:#e8635a"></div>Execution</div>
+          <div class="r-leg"><div class="r-leg-dot" style="background:#9b8ec4"></div>Brand & Marketing</div>
+        </div>
+      </div>
+
+      <div id="directionSlot"></div>
+
+      <div class="interp-section">
+        <div class="r-section-eyebrow">Why This Matters</div>
+        <div class="r-section-title">Most sellers pick the wrong platform first</div>
+        <div class="r-section-body">
+          Not because they didn't work hard — but because the platform didn't match how they actually operate.<br><br>
+          Amazon rewards systems and scale. Shopify rewards brand building. Etsy rewards craft and story. Each one punishes sellers whose profile doesn't fit.<br><br>
+          This profile is step one. A live session helps you connect it to an actual plan.
+        </div>
+      </div>
+
+      <div class="result-intro-nudge">
+        <span>Not sure which option fits your situation?</span>
+        <a href="https://calendly.com/gio_chakhidze/new-meeting">Talk to Gio first — free 30 min →</a>
+      </div>
+
+      <div class="cta-section">
+        <div class="cta-eyebrow">Your Next Steps</div>
+        <div class="cta-title">Two Ways to Go Deeper</div>
+
+        <label class="cta-consent" id="bookingConsentLabel" style="margin-bottom:32px;">
+          <input type="checkbox" id="bookingConsent">
+          <span class="cta-consent-txt">
+            ✓ Check this box to confirm you understand this profile is a starting point, and that your final decisions are your own responsibility.
+          </span>
+        </label>
+
+        <div style="border:1px solid #2e2e3e;border-radius:10px;padding:28px;margin-bottom:16px;background:rgba(255,255,255,0.02);">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.14em;color:#2a7a7a;margin-bottom:12px;">Option 1 · $89</div>
+          <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--t1);margin-bottom:10px;">Seller Profile Deep-Dive</div>
+          <ul class="cta-list" style="margin-bottom:16px;">
+            <li>Walk through your scores together and understand what they mean</li>
+            <li>Identify your seller archetype and what it implies for your approach</li>
+            <li>Leave with clear next steps — including whether the Entry Strategy is right for you</li>
+          </ul>
+          <div class="cta-price"><strong>45–60 minute call · $89</strong></div>
+          <button type="button" id="ctaBtn" class="cta-btn" disabled>Book My Profile Deep-Dive · $89 →</button>
+        </div>
+
+        <div style="border:1.5px solid rgba(202,162,95,0.35);border-radius:10px;padding:28px;background:rgba(202,162,95,0.03);">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.14em;color:#2a7a7a;margin-bottom:12px;">Option 2 · $449 — Recommended</div>
+          <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--t1);margin-bottom:10px;">Entry Strategy Dossier</div>
+          <ul class="cta-list" style="margin-bottom:16px;">
+            <li>Your seller profile interpreted alongside verified market data</li>
+            <li>Platform recommendation based on your profile AND your specific category</li>
+            <li>A complete entry plan — what to sell, where, how to enter, what risks to manage</li>
+            <li>Written dossier + 60-minute walkthrough session</li>
+          </ul>
+          <div class="cta-price"><strong>Written dossier + 60-minute session · $449</strong></div>
+          <button type="button" id="ctaBtn2" class="cta-btn" disabled>Get My Entry Strategy · $449 →</button>
+        </div>
+
+        <div style="margin-top:24px;padding:16px 20px;border:1px solid #1a3028;border-radius:8px;background:rgba(15,110,86,0.04);text-align:center;">
+          <div style="font-size:12px;color:#505060;margin-bottom:8px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;">Ran all three free tools?</div>
+          <a href="https://calendly.com/gio_chakhidze/new-meeting" style="font-size:14px;color:#0f6e56;text-decoration:none;border-bottom:1px solid rgba(15,110,86,0.3);">You're ready — Book Entry Strategy · $449 →</a>
+        </div>
+
+        <div class="cta-or-talk">
+          Not ready to commit? <a href="https://calendly.com/gio_chakhidze/new-meeting">Book a free 30-min intro call first →</a>
+        </div>
+
+        <div class="cta-agreement" style="margin-top:16px;">
+          By booking you acknowledge the
+          <a href="https://esellerfit.com/legal/client-agreement.html" target="_blank">Client Advisory Agreement</a>.
+        </div>
+      </div>
+
+      <div class="next-section">
+        <div class="r-section-eyebrow">What Comes Next</div>
+        <div class="r-section-title">Now you know where to sell. The Entry Strategy tells you what — and exactly how.</div>
+        <div class="r-section-body" style="font-size:14px;color:var(--t3);">
+          Your seller profile is one side of the equation. The other side is your market — the competition, the pricing pressure, the platform dynamics for your specific category.<br><br>
+          The <strong style="color:var(--t2);">Entry Strategy</strong> combines both sides using verified data from Helium 10 and Jungle Scout, and delivers a complete decision: what to sell, where, how to enter, and what risks to manage.
+        </div>
+      </div>
+
+      <div class="advisory-section">
+        <div class="advisory-title">Advisory Notice</div>
+        <div class="advisory-body">
+          This calculator provides directional advisory insight based on user inputs.
+          It is intended for educational and strategic planning purposes only and does not constitute
+          legal, financial, tax, or investment advice. All business decisions remain the sole
+          responsibility of the user.
+        </div>
+      </div>
+
+      <div class="r-footer">
+        <a href="https://esellerfit.com/legal/terms.html">Terms of Service</a>
+        <a href="https://esellerfit.com/legal/privacy.html">Privacy Policy</a>
+        <a href="https://esellerfit.com/legal/disclaimer.html">Disclaimer</a>
+        <a href="https://esellerfit.com/legal/client-agreement.html">Client Advisory Agreement</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="./assets/js/config.js"></script>
+  <script src="./assets/js/calculator-shell.js"></script>
+  <script src="./assets/js/seller-profile-data.js"></script>
+  <script src="./assets/js/seller-profile-engine.js"></script>
+  <script src="./assets/js/seller-profile-render.js"></script>
+  <script src="./assets/js/seller-profile-app.js"></script>
+</body>
+</html>
