@@ -71,7 +71,6 @@
       startBtnId: 'startBtn'
     });
 
-    // Marketplace Fit does not use category, so patch validation directly
     const emailEl = document.getElementById('emailInput');
     const consentEl = document.getElementById('consentCheck');
     const startBtn = document.getElementById('startBtn');
@@ -102,7 +101,13 @@
     });
 
     document.getElementById('cBtn')?.addEventListener('click', submitAssessment);
-    document.getElementById('ctaBtn')?.addEventListener('click', () => { window.location.href = window.ESF_CONFIG.bookingUrl; });
-    document.getElementById('ctaBtn2')?.addEventListener('click', () => { window.location.href = window.ESF_CONFIG.bookingUrl; });
+
+    document.getElementById('ctaBtn')?.addEventListener('click', () => {
+      window.location.href = window.ESF_CONFIG.paidBookingUrl;
+    });
+
+    document.getElementById('ctaBtn2')?.addEventListener('click', () => {
+      window.location.href = window.ESF_CONFIG.freeCallUrl;
+    });
   });
 })();
