@@ -59,15 +59,13 @@ window.MARKET_PRESSURE_RENDER = {
     const oceanCopy = window.MARKET_PRESSURE_DATA.oceanCopy[scores.ocean];
     const dominantData = window.MARKET_PRESSURE_DATA.dominantData[scores.dominant];
 
-    document.getElementById('categoryLine').textContent = `Scanning: "${category}" — this score reflects what you observed in that category. The more accurate your observations, the more useful this result.`;
+    document.getElementById('categoryLine').textContent =
+      `Scanning: "${category}" — this score reflects what you observed in that category. The more accurate your observations, the more useful this result.`;
 
+    const gaugeHtml = this.buildGauge(scores.index, scores.ocean, oceanCopy);
     const card = document.getElementById('indexCard');
     card.className = `index-card index-${scores.ocean}`;
-    document.getElementById('indexCardLabel').textContent = 'Your Market Pressure';
-    document.getElementById('indexNumber').textContent = scores.index.toFixed(1);
-    document.getElementById('zoneLabel').textContent = scores.ocean === 'blue' ? '1.0 – 3.0' : scores.ocean === 'amber' ? '3.1 – 6.9' : '7.0 – 10.0';
-    document.getElementById('zoneName').textContent = oceanCopy.label;
-    document.getElementById('indexBody').textContent = oceanCopy.body;
+    card.innerHTML = gaugeHtml;
 
     const forceRows = document.getElementById('forceRows');
     forceRows.innerHTML = '';
@@ -86,7 +84,9 @@ window.MARKET_PRESSURE_RENDER = {
           <div class="force-bar-fill" data-pct="${pct}" style="width:0%;background:${meta.hex};"></div>
         </div>
         <div class="force-score-txt" style="color:${meta.color}">${val.toFixed(1)}</div>
-        ${isTop ? `<div class="force-dominant-badge" style="background:${meta.hex}20;color:${meta.hex};">dominant</div>` : '<div style="width:60px"></div>'}
+        ${isTop
+          ? `<div class="force-dominant-badge" style="background:${meta.hex}20;color:${meta.hex};">dominant</div>`
+          : '<div style="width:60px"></div>'}
       `;
       forceRows.appendChild(row);
     });
@@ -100,11 +100,101 @@ window.MARKET_PRESSURE_RENDER = {
 
     document.getElementById('dominantSlot').innerHTML = `
       <div class="dominant-card ${dominantData.cardClass}">
-        <div class="dominant-eyebrow" style="color:${dominantData.eyecolor}">Primary Risk Factor — Dominant Force</div>
+        <div class="dominant-eyebrow" style="color:${dominantData.eyecolor}">
+          Primary Risk Factor — Dominant Force
+        </div>
         <div class="dominant-title">${dominantData.title}</div>
         <div class="dominant-what">${dominantData.what}</div>
         <div class="dominant-action-lbl">High-Level Strategic Prescription</div>
         <div class="dominant-action">${dominantData.action}</div>
+      </div>
+    `;
+  },
+
+  buildGauge(index, ocean, oceanCopy) {
+    const value = Math.max(1, Math.min(10, index));
+    const t = (value - 1) / 9; // 0..1
+    const startAngle = Math.PI;
+    const endAngle = 0;
+    const angle = startAngle + (endAngle - startAngle) * t;
+
+    const cx = 160;
+    const cy = 160;
+    const r = 120;
+    const markerX = cx + r * Math.cos(angle);
+    const markerY = cy + r * Math.sin(angle);
+
+    const zoneRange =
+      ocean === 'blue' ? '1.0 – 3.0' :
+      ocean === 'amber' ? '3.1 – 6.9' :
+      '7.0 – 10.0';
+
+    return `
+      <div style="text-align:center;">
+        <div class="index-card-label" style="margin-bottom:18px;">Your Market Pressure</div>
+
+        <div style="position:relative;width:320px;height:220px;margin:0 auto 12px;">
+          <svg viewBox="0 0 320 220" width="320" height="220" style="display:block;margin:0 auto;overflow:visible;">
+            <path d="M 40 160 A 120 120 0 0 1 280 160"
+              fill="none"
+              stroke="#e7e1d8"
+              stroke-width="18"
+              stroke-linecap="round"/>
+
+            <path d="M 40 160 A 120 120 0 0 1 108 56"
+              fill="none"
+              stroke="#4f8f7a"
+              stroke-width="18"
+              stroke-linecap="round"/>
+
+            <path d="M 108 56 A 120 120 0 0 1 212 56"
+              fill="none"
+              stroke="#c28a3a"
+              stroke-width="18"
+              stroke-linecap="butt"/>
+
+            <path d="M 212 56 A 120 120 0 0 1 280 160"
+              fill="none"
+              stroke="#c94a3a"
+              stroke-width="18"
+              stroke-linecap="round"/>
+
+            <circle cx="${markerX.toFixed(1)}" cy="${markerY.toFixed(1)}" r="8"
+              fill="${ocean === 'blue' ? '#4f8f7a' : ocean === 'amber' ? '#c28a3a' : '#c94a3a'}"
+              stroke="#ffffff"
+              stroke-width="4"/>
+          </svg>
+
+          <div style="position:absolute;left:0;right:0;top:76px;">
+            <div style="
+              font-family:'JetBrains Mono',monospace;
+              font-size:56px;
+              font-weight:700;
+              line-height:1;
+              color:var(--ink);
+            ">${value.toFixed(1)}</div>
+
+            <div style="
+              margin-top:10px;
+              font-family:'JetBrains Mono',monospace;
+              font-size:10px;
+              letter-spacing:0.12em;
+              text-transform:uppercase;
+              color:${ocean === 'blue' ? '#4f8f7a' : ocean === 'amber' ? '#a06d24' : '#b04b3d'};
+            ">${zoneRange}</div>
+
+            <div style="
+              margin-top:10px;
+              font-family:'Playfair Display',serif;
+              font-size:30px;
+              color:var(--ink);
+            ">${oceanCopy.label}</div>
+          </div>
+        </div>
+
+        <div class="index-body" style="max-width:560px;margin:0 auto;">
+          ${oceanCopy.body}
+        </div>
       </div>
     `;
   }
