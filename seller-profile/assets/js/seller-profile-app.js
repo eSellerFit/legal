@@ -97,7 +97,13 @@
     });
 
     document.getElementById('cBtn')?.addEventListener('click', submitAssessment);
-    document.getElementById('ctaBtn')?.addEventListener('click', () => { window.location.href = window.ESF_CONFIG.bookingUrl; });
-    document.getElementById('ctaBtn2')?.addEventListener('click', () => { window.location.href = window.ESF_CONFIG.bookingUrl; });
+
+    document.getElementById('ctaBtn')?.addEventListener('click', () => {
+      window.location.href = window.ESF_CONFIG.paidBookingUrl;
+    });
+
+    document.getElementById('ctaBtn2')?.addEventListener('click', () => {
+      window.location.href = window.ESF_CONFIG.freeCallUrl;
+    });
   });
 })();
