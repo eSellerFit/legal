@@ -11,8 +11,16 @@
   function pickAnswer(qid, idx) {
     state.answers[qid] = idx;
     window.SELLER_PROFILE_RENDER.buildQuestions('aBody', state.answers, pickAnswer);
-    window.ESF_SHELL.setProgress(countAnswered(), window.SELLER_PROFILE_DATA.totalQuestions, 'progTxt', 'progFill');
-    document.getElementById('cBar')?.classList.toggle('show', countAnswered() === window.SELLER_PROFILE_DATA.totalQuestions);
+    window.ESF_SHELL.setProgress(
+      countAnswered(),
+      window.SELLER_PROFILE_DATA.totalQuestions,
+      'progTxt',
+      'progFill'
+    );
+    document.getElementById('cBar')?.classList.toggle(
+      'show',
+      countAnswered() === window.SELLER_PROFILE_DATA.totalQuestions
+    );
   }
 
   async function submitAssessment() {
@@ -32,35 +40,85 @@
       btn.disabled = true;
       btn.textContent = 'Processing...';
     }
+
     window.ESF_SHELL.toggleOverlay(true);
 
-    const scores = window.SELLER_PROFILE_ENGINE.score(state.answers);
-    const recommendation = window.SELLER_PROFILE_ENGINE.recommend(scores);
+    try {
+      const scores = window.SELLER_PROFILE_ENGINE.score(state.answers);
+      const recommendation = window.SELLER_PROFILE_ENGINE.recommend(scores);
 
-    await window.ESF_SHELL.submitLead({
-      clientEmail: state.clientEmail,
-      capital: scores.c,
-      risk: scores.r,
-      execution: scores.e,
-      market: scores.m,
-      capitalTier: window.SELLER_PROFILE_ENGINE.capTier(scores.c),
-      startPlatform: recommendation?.state === 'wait' ? 'Wait' : (recommendation?.step1?.platform || ''),
-      scalePlatform: recommendation?.state !== 'wait' ? (recommendation?.step2?.platform || '') : '',
-      greyZone: recommendation?.greyZone ? 'Yes' : 'No',
-      waitState: recommendation?.state === 'wait' ? 'Yes' : 'No',
-      weakestMuscle: recommendation?.state === 'wait' ? recommendation.weakest.dim : ''
-    });
+      await window.ESF_SHELL.submitLead({
+        clientEmail: state.clientEmail,
+        toolType: 'Seller Profile',
+        sourcePage: window.location.href,
+        sourceEntryPoint: 'seller-profile-start',
 
-    setTimeout(() => {
+        rawAnswersJson: JSON.stringify(state.answers),
+
+        capital: scores.c,
+        risk: scores.r,
+        execution: scores.e,
+        market: scores.m,
+
+        capitalTier: window.SELLER_PROFILE_ENGINE.capTier(scores.c),
+
+        startPlatform:
+          recommendation?.state === 'wait'
+            ? 'Wait'
+            : (recommendation?.step1?.platform || ''),
+
+        scalePlatform:
+          recommendation?.state !== 'wait'
+            ? (recommendation?.step2?.platform || '')
+            : '',
+
+        greyZone: recommendation?.greyZone ? 'Yes' : 'No',
+        waitState: recommendation?.state === 'wait' ? 'Yes' : 'No',
+        weakestMuscle:
+          recommendation?.state === 'wait'
+            ? (recommendation?.weakest?.dim || '')
+            : '',
+
+        recommendedDirection:
+          recommendation?.state === 'wait'
+            ? 'Wait'
+            : (recommendation?.step1?.platform || ''),
+
+        resultSummary:
+          recommendation?.state === 'wait'
+            ? `Not ready to launch yet. Primary gap: ${recommendation?.weakest?.dim || 'unknown'}`
+            : `Best starting platform: ${recommendation?.step1?.platform || 'unknown'}`,
+
+        scoresJson: JSON.stringify({
+          capital: scores.c,
+          risk: scores.r,
+          execution: scores.e,
+          market: scores.m
+        })
+      });
+
+      setTimeout(() => {
+        window.ESF_SHELL.toggleOverlay(false);
+        window.SELLER_PROFILE_RENDER.renderResults(scores, recommendation);
+        window.ESF_SHELL.show('resultsScreen');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = 'Generate My Profile →';
+        }
+      }, 1800);
+    } catch (err) {
+      console.error('Seller Profile submission failed', err);
       window.ESF_SHELL.toggleOverlay(false);
-      window.SELLER_PROFILE_RENDER.renderResults(scores, recommendation);
-      window.ESF_SHELL.show('resultsScreen');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+
       if (btn) {
         btn.disabled = false;
         btn.textContent = 'Generate My Profile →';
       }
-    }, 1800);
+
+      alert('Something went wrong while saving your profile. Please try again.');
+    }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -69,15 +127,21 @@
     const startBtn = document.getElementById('startBtn');
 
     const validate = () => {
-      const ok = window.ESF_SHELL.validateEmail(emailEl?.value || '') && !!consentEl?.checked;
+      const ok =
+        window.ESF_SHELL.validateEmail(emailEl?.value || '') &&
+        !!consentEl?.checked;
+
       if (startBtn) startBtn.disabled = !ok;
     };
 
     emailEl?.addEventListener('input', validate);
     consentEl?.addEventListener('change', validate);
     emailEl?.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && startBtn && !startBtn.disabled) startBtn.click();
+      if (e.key === 'Enter' && startBtn && !startBtn.disabled) {
+        startBtn.click();
+      }
     });
+
     validate();
 
     window.ESF_SHELL.bindBookingConsent({
@@ -88,9 +152,15 @@
     document.getElementById('startBtn')?.addEventListener('click', () => {
       state.clientEmail = document.getElementById('emailInput')?.value.trim() || '';
       state.answers = {};
+
       document.getElementById('aSubtitle').textContent = 'Seller Profile Diagnostic';
       window.SELLER_PROFILE_RENDER.buildQuestions('aBody', state.answers, pickAnswer);
-      window.ESF_SHELL.setProgress(0, window.SELLER_PROFILE_DATA.totalQuestions, 'progTxt', 'progFill');
+      window.ESF_SHELL.setProgress(
+        0,
+        window.SELLER_PROFILE_DATA.totalQuestions,
+        'progTxt',
+        'progFill'
+      );
       document.getElementById('cBar')?.classList.remove('show');
       window.ESF_SHELL.show('assessScreen');
       window.scrollTo({ top: 0, behavior: 'instant' });
