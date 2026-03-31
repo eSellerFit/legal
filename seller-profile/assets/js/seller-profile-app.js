@@ -67,15 +67,19 @@
           ? (recommendation?.weakest?.dim || '')
           : '';
 
-      const recommendedDirection =
+      let recommendedDirection =
         recommendation?.state === 'wait'
           ? 'Wait'
           : (recommendation?.step1?.platform || '');
 
+      if (recommendedDirection === 'Niche / D2C') {
+        recommendedDirection = 'Shopify';
+      }
+
       const resultSummary =
         recommendation?.state === 'wait'
           ? `Not ready to launch yet. Primary gap: ${recommendation?.weakest?.dim || 'unknown'}`
-          : `Best starting platform: ${recommendation?.step1?.platform || 'unknown'}`;
+          : `Best starting platform: ${recommendedDirection || 'unknown'}`;
 
       await window.ESF_SHELL.submitLead({
         clientEmail: state.clientEmail,
