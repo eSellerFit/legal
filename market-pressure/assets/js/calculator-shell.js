@@ -32,7 +32,8 @@ window.ESF_SHELL = {
       const email = emailEl ? emailEl.value.trim() : '';
       const category = categoryEl ? categoryEl.value.trim() : '';
       const consent = !!(consentEl && consentEl.checked);
-      const ok = this.validateEmail(email) && category.length > 0 && consent;
+      const categoryOk = categoryEl ? category.length > 0 : true;
+      const ok = this.validateEmail(email) && categoryOk && consent;
       if (startBtn) startBtn.disabled = !ok;
     };
 
@@ -71,21 +72,70 @@ window.ESF_SHELL = {
 
   async submitLead(payload) {
     const url = window.ESF_CONFIG?.webAppUrl;
-    if (!url || !url.includes('script.google.com')) return;
+    if (!url) {
+      console.error('ESF_CONFIG.webAppUrl is missing');
+      return;
+    }
 
-    const formData = new FormData();
-    Object.entries(payload).forEach(([key, value]) => {
-      formData.append(key, value == null ? '' : String(value));
-    });
+    const body = {
+      email: payload.clientEmail || '',
+      tool_type: payload.toolType || '',
+      source_page: payload.sourcePage || window.location.href,
+      source_entry_point: payload.sourceEntryPoint || '',
+      accepted_at: new Date().toISOString(),
+      user_agent: navigator.userAgent,
+
+      capital: payload.capital ?? '',
+      risk: payload.risk ?? '',
+      execution: payload.execution ?? '',
+      market: payload.market ?? '',
+
+      capitalTier: payload.capitalTier || '',
+      startPlatform: payload.startPlatform || '',
+      scalePlatform: payload.scalePlatform || '',
+      greyZone: payload.greyZone || '',
+      waitState: payload.waitState || '',
+      weakestMuscle: payload.weakestMuscle || '',
+
+      customerFit: payload.customerFit ?? '',
+      operationalFit: payload.operationalFit ?? '',
+      financialFit: payload.financialFit ?? '',
+      amazonScore: payload.amazonScore ?? '',
+      shopifyScore: payload.shopifyScore ?? '',
+      etsyScore: payload.etsyScore ?? '',
+      topPlatform: payload.topPlatform || '',
+      secondPlatform: payload.secondPlatform || '',
+      platformGap: payload.platformGap ?? '',
+
+      clientCategory: payload.clientCategory || '',
+      demand: payload.demand ?? '',
+      supply: payload.supply ?? '',
+      advertising: payload.advertising ?? '',
+      margin: payload.margin ?? '',
+      index: payload.index ?? '',
+      ocean: payload.ocean || '',
+      dominantForce: payload.dominantForce || '',
+
+      rawAnswersJson: payload.rawAnswersJson || '',
+      scoresJson: payload.scoresJson || '',
+      resultSummary: payload.resultSummary || '',
+      recommendedDirection: payload.recommendedDirection || ''
+    };
 
     try {
-      await fetch(url, {
+      const res = await fetch(url, {
         method: 'POST',
-        mode: 'no-cors',
-        body: formData
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
       });
+
+      if (!res.ok) {
+        throw new Error(`Submission failed: ${res.status}`);
+      }
     } catch (err) {
-      console.log('Submission skipped');
+      console.error('Submission failed', err);
     }
   }
 };
