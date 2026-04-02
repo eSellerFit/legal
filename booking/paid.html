@@ -21,6 +21,10 @@
         The $549 version includes one additional call during strategy preparation.
       </p>
 
+      <p class="trust-note">
+        No commitment beyond this booking. No upsells during the session.
+      </p>
+
       <form id="bookingForm">
         <div class="form-group">
           <label for="fullName">Full Name *</label>
@@ -67,7 +71,7 @@
         </div>
 
         <div class="consent-section">
-          <div class="consent-title">Required Agreements</div>
+          <div class="consent-title">Before you proceed</div>
 
           <div class="consent-item consent-item-full">
             <label for="legalConsent">
@@ -84,14 +88,17 @@
           </div>
 
           <p class="consent-note">
-            By proceeding, you acknowledge that services are non-tangible and subject to the
+            This is a paid advisory service with custom analysis and reserved time.
+            Refunds and rescheduling are handled according to the
             <a href="../legal/refund-policy.html" target="_blank" rel="noopener noreferrer">Refund Policy</a>.
           </p>
         </div>
 
-        <button type="submit" id="submitBtn" disabled>Continue to Calendar</button>
+        <button type="submit" id="submitBtn" disabled>Continue to Payment</button>
+
         <div class="helper">
-          You’ll be redirected to the correct Google Calendar booking page after submission.
+          After submission, you’ll be redirected to secure Stripe checkout.
+          Once payment is completed, you’ll continue to Google Calendar to select your time.
         </div>
       </form>
 
