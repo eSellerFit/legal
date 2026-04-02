@@ -107,9 +107,17 @@ function validateForm() {
 
   let isValid = true;
 
-  if (!fullName) isValid = false;
-  if (!email || !validateEmail(email)) isValid = false;
-  if (!productSelected || !legalConsent) isValid = false;
+  if (!fullName) {
+    isValid = false;
+  }
+
+  if (!email || !validateEmail(email)) {
+    isValid = false;
+  }
+
+  if (!productSelected || !legalConsent) {
+    isValid = false;
+  }
 
   document.getElementById('submitBtn').disabled = !isValid;
   return isValid;
@@ -136,29 +144,42 @@ function attachValidationHandlers() {
   document.getElementById('legalConsent').addEventListener('change', validateForm);
 }
 
-async function sendToAppsScript(payload) {
+async function sendToMake(payload) {
   try {
-    await fetch(APPS_SCRIPT_URL, {
+    const response = await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
-      body: JSON.stringify(payload),
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
+
+    if (!response.ok) {
+      console.error('Make webhook error:', response.status, response.statusText);
+    }
+
+    return response;
   } catch (error) {
-    console.error('Error sending to Apps Script:', error);
+    console.error('Error sending to Make:', error);
+    throw error;
   }
 }
 
 function buildConsentData({ fullName, email, productValue, productPrice, clientInfo, now }) {
+  const checkboxText =
+    'I have read and agree to the documents governing this purchase. Terms of Service · Client Agreement · Refund Policy · Privacy Policy · Disclaimer';
+
   return {
     fullName,
     email,
     product: productValue,
-    price: productPrice,
+    price: Number(productPrice),
     service: `Entry Strategy $${productPrice}`,
     legalConsentAgreed: true,
     legalConsentTimestamp: now,
     consentTimestamp: now,
+    accepted_at: now,
     allConsentsObtained: true,
+    checkboxText,
+    sourcePage: window.location.href,
     legalDocsAccepted: LEGAL_DOCS,
     ipAddress: clientInfo.ip,
     userAgent: clientInfo.userAgent,
@@ -173,15 +194,26 @@ function buildPayload(consentData) {
   return {
     source: 'paid-booking',
     flow: 'booking-page -> stripe -> google-calendar',
+
     fullName: consentData.fullName,
     email: consentData.email,
     product: consentData.product,
     price: consentData.price,
     service: consentData.service,
+
+    accepted: true,
+    accepted_at: consentData.accepted_at,
     consentTimestamp: consentData.consentTimestamp,
     legalConsentTimestamp: consentData.legalConsentTimestamp,
-    nextStep: consentData.nextStep,
-    intendedRedirectAfterPayment: consentData.intendedRedirectAfterPayment,
+
+    consentType: 'Paid Booking Consent',
+    legalBundleVersion: 'legal-bundle-apr-2026-v1',
+    documentsCount: 5,
+    expectedDocumentsCount: 5,
+
+    sourcePage: consentData.sourcePage,
+    checkbox_text_shown: consentData.checkboxText,
+
     consents: {
       legalConsent: true,
       termsOfService: true,
@@ -190,13 +222,20 @@ function buildPayload(consentData) {
       privacyPolicy: true,
       disclaimer: true
     },
+
     legalDocs: consentData.legalDocsAccepted,
+
     tracking: {
       ip: consentData.ipAddress,
       userAgent: consentData.userAgent,
       platform: consentData.platform,
       deviceType: consentData.deviceType
-    }
+    },
+
+    raw_payload_snapshot: JSON.stringify(consentData),
+
+    nextStep: consentData.nextStep,
+    intendedRedirectAfterPayment: consentData.intendedRedirectAfterPayment
   };
 }
 
@@ -277,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
       );
 
       const payload = buildPayload(consentData);
-      await sendToAppsScript(payload);
+      await sendToMake(payload);
 
       setTimeout(() => {
         window.location.href = checkoutUrl;
