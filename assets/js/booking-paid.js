@@ -1,9 +1,41 @@
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbznMW1S5Dm036R-AgD8AeNANgDrGwU74Zg1Y1XLtZRaNN548R68VhNsDGpkeWGb0Izh-Q/exec';
 
-const PAID_CALENDAR_LINKS = {
-  'entry-strategy-449': 'https://calendar.app.google/4F69KMakEsaPsGG5A',
-  'entry-strategy-549': 'https://calendar.app.google/RZDvSptiAbqw9bE3A'
+const PAID_CHECKOUT_LINKS = {
+  'entry-strategy-449': 'https://buy.stripe.com/14AeV7cR52mJ2p81O4enS00',
+  'entry-strategy-549': 'https://buy.stripe.com/fZu8wJ5oD3qN5Bk9gwenS01'
 };
+
+const LEGAL_DOCS = {
+  termsOfService: {
+    accepted: true,
+    url: '../legal/terms.html',
+    name: 'Terms of Service'
+  },
+  clientAgreement: {
+    accepted: true,
+    url: '../legal/client-agreement.html',
+    name: 'Client Agreement'
+  },
+  refundPolicy: {
+    accepted: true,
+    url: '../legal/refund-policy.html',
+    name: 'Refund Policy'
+  },
+  privacyPolicy: {
+    accepted: true,
+    url: '../legal/privacy.html',
+    name: 'Privacy Policy'
+  },
+  disclaimer: {
+    accepted: true,
+    url: '../legal/disclaimer.html',
+    name: 'Disclaimer'
+  }
+};
+
+function getDeviceType(userAgent) {
+  return /mobile|android|iphone|ipad|tablet/i.test(userAgent) ? 'mobile' : 'desktop';
+}
 
 async function getClientInfo() {
   const userAgent = navigator.userAgent;
@@ -22,81 +54,70 @@ async function getClientInfo() {
     ip,
     userAgent,
     platform,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    deviceType: getDeviceType(userAgent)
   };
 }
 
-document.querySelectorAll('input[name="product"]').forEach(radio => {
-  radio.addEventListener('change', (e) => {
-    document.querySelectorAll('.product-box').forEach(box => box.classList.remove('selected'));
-    e.target.closest('.product-box').classList.add('selected');
-    validateForm();
-  });
-});
+function validateEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
 
 function validateForm() {
   const fullName = document.getElementById('fullName').value.trim();
   const email = document.getElementById('email').value.trim();
   const productSelected = document.querySelector('input[name="product"]:checked');
-  const agreementConsent = document.getElementById('agreementConsent').checked;
-  const refundConsent = document.getElementById('refundConsent').checked;
+  const legalConsent = document.getElementById('legalConsent').checked;
 
-  const isValid = fullName && email && productSelected && agreementConsent && refundConsent;
+  const fullNameError = document.getElementById('fullNameError');
+  const emailError = document.getElementById('emailError');
+
+  if (fullNameError) fullNameError.textContent = '';
+  if (emailError) emailError.textContent = '';
+
+  let isValid = true;
+
+  if (!fullName) {
+    isValid = false;
+  }
+
+  if (!email || !validateEmail(email)) {
+    isValid = false;
+  }
+
+  if (!productSelected || !legalConsent) {
+    isValid = false;
+  }
+
   document.getElementById('submitBtn').disabled = !isValid;
+  return isValid;
 }
 
-document.getElementById('fullName').addEventListener('input', validateForm);
-document.getElementById('email').addEventListener('input', validateForm);
-document.getElementById('agreementConsent').addEventListener('change', validateForm);
-document.getElementById('refundConsent').addEventListener('change', validateForm);
+function attachProductSelectionHandlers() {
+  document.querySelectorAll('input[name="product"]').forEach((radio) => {
+    radio.addEventListener('change', (e) => {
+      document.querySelectorAll('.product-box').forEach((box) => {
+        box.classList.remove('selected');
+      });
 
-document.getElementById('bookingForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const clientInfo = await getClientInfo();
-  const selectedProduct = document.querySelector('input[name="product"]:checked');
-  const productValue = selectedProduct.value;
-  const productPrice = selectedProduct.closest('.product-box').dataset.price;
-  const now = new Date().toISOString();
-
-  const consentData = {
-    fullName: document.getElementById('fullName').value.trim(),
-    email: document.getElementById('email').value.trim(),
-    product: productValue,
-    price: productPrice,
-    service: `Entry Strategy $${productPrice}`,
-    agreementAgreed: document.getElementById('agreementConsent').checked,
-    agreementTimestamp: now,
-    refundAgreed: document.getElementById('refundConsent').checked,
-    refundTimestamp: now,
-    ipAddress: clientInfo.ip,
-    userAgent: clientInfo.userAgent,
-    platform: clientInfo.platform,
-    consentTimestamp: now,
-    allConsentsObtained: true
-  };
-
-  localStorage.setItem('esellerfit_paid_booking_consent', JSON.stringify(consentData));
-
-  try {
-    const payload = {
-      source: 'paid-booking',
-      fullName: consentData.fullName,
-      email: consentData.email,
-      product: consentData.product,
-      price: consentData.price,
-      consents: {
-        clientAgreement: consentData.agreementAgreed,
-        refundPolicy: consentData.refundAgreed
-      },
-      tracking: {
-        ip: consentData.ipAddress,
-        userAgent: consentData.userAgent,
-        platform: consentData.platform,
-        deviceType: /mobile|android|iphone|ipad|tablet/i.test(clientInfo.userAgent) ? 'mobile' : 'desktop'
+      const selectedBox = e.target.closest('.product-box');
+      if (selectedBox) {
+        selectedBox.classList.add('selected');
       }
-    };
 
+      validateForm();
+    });
+  });
+}
+
+function attachValidationHandlers() {
+  document.getElementById('fullName').addEventListener('input', validateForm);
+  document.getElementById('email').addEventListener('input', validateForm);
+  document.getElementById('legalConsent').addEventListener('change', validateForm);
+}
+
+async function sendToAppsScript(payload) {
+  try {
     await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
       body: JSON.stringify(payload),
@@ -105,8 +126,142 @@ document.getElementById('bookingForm').addEventListener('submit', async (e) => {
   } catch (error) {
     console.error('Error sending to Apps Script:', error);
   }
+}
 
-  setTimeout(() => {
-    window.location.href = PAID_CALENDAR_LINKS[productValue];
-  }, 400);
+function buildConsentData({ fullName, email, productValue, productPrice, clientInfo, now }) {
+  return {
+    fullName,
+    email,
+    product: productValue,
+    price: productPrice,
+    service: `Entry Strategy $${productPrice}`,
+    legalConsentAgreed: true,
+    legalConsentTimestamp: now,
+    consentTimestamp: now,
+    allConsentsObtained: true,
+    legalDocsAccepted: LEGAL_DOCS,
+    ipAddress: clientInfo.ip,
+    userAgent: clientInfo.userAgent,
+    platform: clientInfo.platform,
+    deviceType: clientInfo.deviceType,
+    nextStep: 'stripe-checkout',
+    intendedRedirectAfterPayment: 'google-calendar'
+  };
+}
+
+function buildPayload(consentData) {
+  return {
+    source: 'paid-booking',
+    flow: 'booking-page -> stripe -> google-calendar',
+    fullName: consentData.fullName,
+    email: consentData.email,
+    product: consentData.product,
+    price: consentData.price,
+    service: consentData.service,
+    consentTimestamp: consentData.consentTimestamp,
+    legalConsentTimestamp: consentData.legalConsentTimestamp,
+    nextStep: consentData.nextStep,
+    intendedRedirectAfterPayment: consentData.intendedRedirectAfterPayment,
+    consents: {
+      legalConsent: true,
+      termsOfService: true,
+      clientAgreement: true,
+      refundPolicy: true,
+      privacyPolicy: true,
+      disclaimer: true
+    },
+    legalDocs: consentData.legalDocsAccepted,
+    tracking: {
+      ip: consentData.ipAddress,
+      userAgent: consentData.userAgent,
+      platform: consentData.platform,
+      deviceType: consentData.deviceType
+    }
+  };
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  attachProductSelectionHandlers();
+  attachValidationHandlers();
+  validateForm();
+
+  document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const fullName = document.getElementById('fullName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const selectedProduct = document.querySelector('input[name="product"]:checked');
+    const legalConsentChecked = document.getElementById('legalConsent').checked;
+    const submitBtn = document.getElementById('submitBtn');
+
+    const fullNameError = document.getElementById('fullNameError');
+    const emailError = document.getElementById('emailError');
+
+    if (fullNameError) fullNameError.textContent = '';
+    if (emailError) emailError.textContent = '';
+
+    let hasError = false;
+
+    if (!fullName) {
+      if (fullNameError) fullNameError.textContent = 'Please enter your full name.';
+      hasError = true;
+    }
+
+    if (!email) {
+      if (emailError) emailError.textContent = 'Please enter your email address.';
+      hasError = true;
+    } else if (!validateEmail(email)) {
+      if (emailError) emailError.textContent = 'Please enter a valid email address.';
+      hasError = true;
+    }
+
+    if (!selectedProduct || !legalConsentChecked) {
+      hasError = true;
+    }
+
+    if (hasError) {
+      validateForm();
+      return;
+    }
+
+    submitBtn.disabled = true;
+
+    try {
+      const clientInfo = await getClientInfo();
+      const productValue = selectedProduct.value;
+      const productPrice = selectedProduct.closest('.product-box').dataset.price;
+      const checkoutUrl = PAID_CHECKOUT_LINKS[productValue];
+      const now = new Date().toISOString();
+
+      if (!checkoutUrl) {
+        console.error(`Missing Stripe checkout link for product: ${productValue}`);
+        validateForm();
+        return;
+      }
+
+      const consentData = buildConsentData({
+        fullName,
+        email,
+        productValue,
+        productPrice,
+        clientInfo,
+        now
+      });
+
+      localStorage.setItem(
+        'esellerfit_paid_booking_consent',
+        JSON.stringify(consentData)
+      );
+
+      const payload = buildPayload(consentData);
+      await sendToAppsScript(payload);
+
+      setTimeout(() => {
+        window.location.href = checkoutUrl;
+      }, 400);
+    } catch (error) {
+      console.error('Submission error:', error);
+      validateForm();
+    }
+  });
 });
