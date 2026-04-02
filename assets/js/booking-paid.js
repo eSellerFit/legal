@@ -63,6 +63,36 @@ function validateEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+function clearProductSelection() {
+  document.querySelectorAll('.product-box').forEach((box) => {
+    box.classList.remove('selected');
+  });
+}
+
+function selectProduct(productId) {
+  const radio = document.getElementById(productId);
+  if (!radio) return;
+
+  radio.checked = true;
+  clearProductSelection();
+
+  const box = radio.closest('.product-box');
+  if (box) {
+    box.classList.add('selected');
+  }
+}
+
+function preselectPlanFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const plan = params.get('plan');
+
+  if (plan === '449') {
+    selectProduct('product449');
+  } else if (plan === '549') {
+    selectProduct('product549');
+  }
+}
+
 function validateForm() {
   const fullName = document.getElementById('fullName').value.trim();
   const email = document.getElementById('email').value.trim();
@@ -77,17 +107,9 @@ function validateForm() {
 
   let isValid = true;
 
-  if (!fullName) {
-    isValid = false;
-  }
-
-  if (!email || !validateEmail(email)) {
-    isValid = false;
-  }
-
-  if (!productSelected || !legalConsent) {
-    isValid = false;
-  }
+  if (!fullName) isValid = false;
+  if (!email || !validateEmail(email)) isValid = false;
+  if (!productSelected || !legalConsent) isValid = false;
 
   document.getElementById('submitBtn').disabled = !isValid;
   return isValid;
@@ -96,9 +118,7 @@ function validateForm() {
 function attachProductSelectionHandlers() {
   document.querySelectorAll('input[name="product"]').forEach((radio) => {
     radio.addEventListener('change', (e) => {
-      document.querySelectorAll('.product-box').forEach((box) => {
-        box.classList.remove('selected');
-      });
+      clearProductSelection();
 
       const selectedBox = e.target.closest('.product-box');
       if (selectedBox) {
@@ -183,6 +203,7 @@ function buildPayload(consentData) {
 document.addEventListener('DOMContentLoaded', () => {
   attachProductSelectionHandlers();
   attachValidationHandlers();
+  preselectPlanFromUrl();
   validateForm();
 
   document.getElementById('bookingForm').addEventListener('submit', async (e) => {
@@ -225,6 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     submitBtn.disabled = true;
+    submitBtn.textContent = 'Redirecting...';
 
     try {
       const clientInfo = await getClientInfo();
@@ -235,6 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (!checkoutUrl) {
         console.error(`Missing Stripe checkout link for product: ${productValue}`);
+        submitBtn.textContent = 'Continue to Payment';
         validateForm();
         return;
       }
@@ -258,9 +281,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       setTimeout(() => {
         window.location.href = checkoutUrl;
-      }, 400);
+      }, 300);
     } catch (error) {
       console.error('Submission error:', error);
+      submitBtn.textContent = 'Continue to Payment';
       validateForm();
     }
   });
