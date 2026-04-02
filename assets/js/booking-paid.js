@@ -1,4 +1,4 @@
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbznMW1S5Dm036R-AgD8AeNANgDrGwU74Zg1Y1XLtZRaNN548R68VhNsDGpkeWGb0Izh-Q/exec';
+const APPS_SCRIPT_URL = 'https://hook.us2.make.com/nlz437jbe9lx9f2llujukmpnpdgtyoqv'';
 
 const PAID_CHECKOUT_LINKS = {
   'entry-strategy-449': 'https://buy.stripe.com/14AeV7cR52mJ2p81O4enS00',
