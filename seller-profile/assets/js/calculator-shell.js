@@ -81,8 +81,14 @@ window.ESF_SHELL = {
       tool_type: payload.toolType || 'Seller Profile',
       source_page: payload.sourcePage || window.location.href,
       source_entry_point: payload.sourceEntryPoint || 'seller-profile-start',
-      accepted_at: new Date().toISOString(),
-      user_agent: navigator.userAgent,
+
+      accepted_at: payload.accepted_at || new Date().toISOString(),
+      checkbox_text_shown: payload.checkbox_text_shown || '',
+
+      ip_address: payload.ip_address || '',
+      user_agent: payload.user_agent || navigator.userAgent,
+      platform: payload.platform || navigator.platform || '',
+      device_type: payload.device_type || '',
 
       capital: payload.capital ?? '',
       risk: payload.risk ?? '',
@@ -99,7 +105,9 @@ window.ESF_SHELL = {
       rawAnswersJson: payload.rawAnswersJson || '',
       scoresJson: payload.scoresJson || '',
       resultSummary: payload.resultSummary || '',
-      recommendedDirection: payload.recommendedDirection || ''
+      recommendedDirection: payload.recommendedDirection || '',
+
+      raw_payload_snapshot: payload.raw_payload_snapshot || ''
     };
 
     try {
