@@ -23,6 +23,31 @@
     );
   }
 
+  function getDeviceType(userAgent) {
+    return /mobile|android|iphone|ipad|tablet/i.test(userAgent) ? 'mobile' : 'desktop';
+  }
+
+  async function getClientInfo() {
+    const userAgent = navigator.userAgent;
+    const platform = navigator.platform;
+
+    let ip = 'unknown';
+    try {
+      const response = await fetch('https://api.ipify.org?format=json');
+      const data = await response.json();
+      ip = data.ip;
+    } catch (e) {
+      console.log('Could not fetch IP');
+    }
+
+    return {
+      ip,
+      userAgent,
+      platform,
+      deviceType: getDeviceType(userAgent)
+    };
+  }
+
   async function submitAssessment() {
     if (countAnswered() < window.SELLER_PROFILE_DATA.totalQuestions) {
       alert('Please answer all 19 questions before submitting');
@@ -45,6 +70,9 @@
 
     try {
       const scores = window.SELLER_PROFILE_ENGINE.score(state.answers);
+      const clientInfo = await getClientInfo();
+      const acceptedAt = new Date().toISOString();
+
       const recommendation = window.SELLER_PROFILE_ENGINE.recommend(scores);
 
       const capitalTier = window.SELLER_PROFILE_ENGINE.capTier(scores.c);
@@ -81,11 +109,22 @@
           ? `Not ready to launch yet. Primary gap: ${recommendation?.weakest?.dim || 'unknown'}`
           : `Best starting platform: ${recommendedDirection || 'unknown'}`;
 
-      await window.ESF_SHELL.submitLead({
+      const checkboxText =
+        'I agree to the Terms of Service, Disclaimer, and Privacy Policy and understand that this tool provides directional advisory insight only.';
+
+      const payload = {
         clientEmail: state.clientEmail,
         toolType: 'Seller Profile',
         sourcePage: window.location.href,
         sourceEntryPoint: 'seller-profile-start',
+
+        accepted_at: acceptedAt,
+        checkbox_text_shown: checkboxText,
+
+        ip_address: clientInfo.ip,
+        user_agent: clientInfo.userAgent,
+        platform: clientInfo.platform,
+        device_type: clientInfo.deviceType,
 
         rawAnswersJson: JSON.stringify(state.answers),
         scoresJson: JSON.stringify({
@@ -109,7 +148,11 @@
 
         recommendedDirection,
         resultSummary
-      });
+      };
+
+      payload.raw_payload_snapshot = JSON.stringify(payload);
+
+      await window.ESF_SHELL.submitLead(payload);
 
       setTimeout(() => {
         window.ESF_SHELL.toggleOverlay(false);
