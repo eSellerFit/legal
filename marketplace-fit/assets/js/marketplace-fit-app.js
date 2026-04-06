@@ -23,6 +23,31 @@
     );
   }
 
+  function getDeviceType(userAgent) {
+    return /mobile|android|iphone|ipad|tablet/i.test(userAgent) ? 'mobile' : 'desktop';
+  }
+
+  async function getClientInfo() {
+    const userAgent = navigator.userAgent;
+    const platform = navigator.platform;
+
+    let ip = 'unknown';
+    try {
+      const response = await fetch('https://api.ipify.org?format=json');
+      const data = await response.json();
+      ip = data.ip;
+    } catch (e) {
+      console.log('Could not fetch IP');
+    }
+
+    return {
+      ip,
+      userAgent,
+      platform,
+      deviceType: getDeviceType(userAgent)
+    };
+  }
+
   async function submitAssessment() {
     if (answeredCount() < window.MARKETPLACE_FIT_DATA.totalQuestions) {
       alert('Please answer all 12 questions before submitting');
@@ -47,6 +72,9 @@
       const layerScores = window.MARKETPLACE_FIT_ENGINE.scoreLayers(state.answers);
       const platformScores = window.MARKETPLACE_FIT_ENGINE.platformScores(layerScores);
       const sorted = window.MARKETPLACE_FIT_ENGINE.sortedPlatforms(platformScores);
+
+      const clientInfo = await getClientInfo();
+      const acceptedAt = new Date().toISOString();
 
       const rawTopPlatform = sorted?.[0]?.[0] || '';
       const rawSecondPlatform = sorted?.[1]?.[0] || '';
@@ -74,11 +102,22 @@
         ? `Best-fit platform: ${topPlatform}. Secondary option: ${secondPlatform || 'none'}.`
         : 'No clear platform recommendation generated.';
 
-      await window.ESF_SHELL.submitLead({
+      const checkboxText =
+        'I agree to the Terms of Service, Disclaimer, and Privacy Policy and understand that this tool provides directional advisory insight only.';
+
+      const payload = {
         clientEmail: state.clientEmail,
         toolType: 'Marketplace Fit',
         sourcePage: window.location.href,
         sourceEntryPoint: 'marketplace-fit-start',
+
+        accepted_at: acceptedAt,
+        checkbox_text_shown: checkboxText,
+
+        ip_address: clientInfo.ip,
+        user_agent: clientInfo.userAgent,
+        platform: clientInfo.platform,
+        device_type: clientInfo.deviceType,
 
         rawAnswersJson: JSON.stringify(state.answers),
         scoresJson: JSON.stringify({
@@ -104,7 +143,11 @@
 
         recommendedDirection,
         resultSummary
-      });
+      };
+
+      payload.raw_payload_snapshot = JSON.stringify(payload);
+
+      await window.ESF_SHELL.submitLead(payload);
 
       setTimeout(() => {
         window.ESF_SHELL.toggleOverlay(false);
