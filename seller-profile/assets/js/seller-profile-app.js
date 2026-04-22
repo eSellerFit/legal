@@ -203,7 +203,7 @@
 
     window.ESF_SHELL.bindBookingConsent({
       consentId: 'bookingConsent',
-      buttonIds: ['ctaBtn', 'ctaBtn2']
+      buttonIds: ['ctaBtn', 'ctaBtnMp', 'ctaBtn2', 'ctaBtn3']
     });
 
     document.getElementById('startBtn')?.addEventListener('click', () => {
@@ -226,11 +226,19 @@
     document.getElementById('cBtn')?.addEventListener('click', submitAssessment);
 
     document.getElementById('ctaBtn')?.addEventListener('click', () => {
-      window.location.href = window.ESF_CONFIG.paidBookingUrl;
+      window.location.href = '../market-pressure/';
+    });
+
+    document.getElementById('ctaBtnMp')?.addEventListener('click', () => {
+      window.location.href = '../marketplace-fit/';
     });
 
     document.getElementById('ctaBtn2')?.addEventListener('click', () => {
       window.location.href = window.ESF_CONFIG.freeCallUrl;
+    });
+
+    document.getElementById('ctaBtn3')?.addEventListener('click', () => {
+      window.location.href = window.ESF_CONFIG.paidBookingUrl;
     });
   });
 })();
